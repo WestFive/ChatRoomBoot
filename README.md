@@ -10,8 +10,12 @@ A basic HTTP authentication is provided, supported by a MySql user database. Any
 An internationalization support is provided for all service messages such as connection/disconnection notification.
 Thymeleaf is used for internationalization and for passing variables to javascript. 
 
-The actual deployment URL is set in the application.properties file by the custom variable:
+The actual deployment URL is set in the application.properties file by the custom property:
 myapp.chatroom.url=//www.dominique-ubersfeld.com:8080/chat-room/chat
+
+The custom property:
+myapp.allowed.origins=//www.dominique-ubersfeld.com:8080
+is used to set the allowed origins to enforce the same domain policy.
 
 The users database itself is created and populated by the SQL source file:
 
