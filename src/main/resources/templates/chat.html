@@ -1,0 +1,157 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org"
+				xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+ 
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+   
+<title>Chat Room</title>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.js"></script>
+
+
+<script type="text/javascript" th:inline="javascript">
+            var stompClient = null;
+            var toto = true;
+            
+            var username = "" + /*[[${username}]]*/;
+            var chatRoomId = "" + /*[[${chatRoomId}]]*/; 
+            var chatRoomUrl = "" + /*[[${chatRoomUrl}]]*/;
+                  
+            var subscribeURL = "/topic/messages/" + chatRoomId;
+            var chatURL = "/app/chat/" + chatRoomId;
+                
+            console.log("chatRoomUrl " + chatRoomUrl);
+            console.log("username " + username);
+             
+            function setConnected(connected) {
+                document.getElementById('connect').disabled = connected;
+                document.getElementById('disconnect').disabled = !connected;
+                document.getElementById('conversationDiv').style.visibility 
+                  = connected ? 'visible' : 'hidden';
+                document.getElementById('welcomeChat').style.visibility
+                  = connected ? 'hidden' : 'visible';
+                document.getElementById('connectedMessage').style.visibility
+                = connected ? 'visible' : 'hidden';
+                document.getElementById('response').innerHTML = '';
+            }
+             
+            function connect() {
+            	var socket = new SockJS(chatRoomUrl);
+                stompClient = Stomp.over(socket);
+                console.log('Sator ' + chatRoomUrl);
+                
+                stompClient.connect({}, function(frame) {
+                    console.log('Arepo');
+                    setConnected(true);
+                    console.log('Connected: ' + frame);
+                    stompClient.subscribe(subscribeURL, function(messageOutput) {
+                        showMessageOutput(JSON.parse(messageOutput.body));
+                    });
+                    console.log('chatURL ' + chatURL);
+                    if (toto) {
+                    	sendDummy();
+                    	toto = false;
+                    }
+                });
+            }
+             
+            function disconnect() {
+                if(stompClient != null) {
+                    stompClient.disconnect();
+                }
+                setConnected(false);
+                console.log("Disconnected");
+            }
+            
+            function sendDummy() {
+                var from = document.getElementById('from').value;
+                stompClient.send(chatURL, {}, 
+                        JSON.stringify({'from':from, 'text':'', 'first':'true'}));
+            }
+             
+             
+            function sendMessage() {
+                var from = document.getElementById('from').value;
+                var text = document.getElementById('text').value;
+                stompClient.send(chatURL, {}, 
+                  JSON.stringify({'from':from, 'text':text, 'first':'false'}));
+            }
+             
+          
+            function showMessageOutput(messageOutput) {
+                var response = document.getElementById('response');
+                var p = document.createElement('p');
+                p.style.wordWrap = 'break-word';
+                
+                console.log(messageOutput.first);
+                
+                switch (messageOutput.code) {
+                	case 'JOINED':
+                		p.appendChild(document.createTextNode(messageOutput.from + " " + /*[[#{chat.joined}]]*/
+                            + " (" + messageOutput.time + ")"));
+                    response.appendChild(p);
+                	break;
+                	case 'LEFT':
+                   	p.appendChild(document.createTextNode(messageOutput.from + " " + /*[[#{chat.left}]]*/ 
+                            + " (" + messageOutput.time + ")"));
+                    response.appendChild(p);
+                	break;
+                	case 'NORMAL':
+                	p.appendChild(document.createTextNode(messageOutput.from + ": " 
+                        + messageOutput.text + " (" + messageOutput.time + ")"));
+                      response.appendChild(p);
+                	break;
+                	default:
+                }
+            }
+            
+            
+</script>
+
+<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.1/css/bootstrap.min.css" />
+<link rel="stylesheet" th:href="@{/css/main.css}" /> 
+</head>
+
+
+<body onload="disconnect()">
+
+ 	<div th:replace="fragments/main::displayPost"></div>
+
+<h1 th:text="#{chatRoom} + ' ' + ${chatRoomName}"></h1>
+    
+    	<div sec:authorize="hasAuthority('CHAT')">   
+			<h1>
+			<span th:text="#{welcome} + ' '"></span>
+			<span sec:authentication="name"></span>
+  			</h1>
+  			<p id="welcomeChat" th:text="#{chat.connect.please}"></p>
+  			<p id="connectedMessage" th:text="#{chat.connected}"></p>
+  			<br /><br />
+   		</div>
+    
+        <div sec:authorize="hasAuthority('CHAT')">  
+            <div>
+                <input type="hidden" id="from" th:value="${username}" />
+            </div>
+            <br />
+            <div>
+                <button id="connect" onclick="connect();"><span th:text="#{chat.connect}"></span></button>
+                <button id="disconnect" disabled="disabled" onclick="disconnect();">
+                    <span th:text="#{chat.disconnect}"></span>
+                </button>
+            </div>
+            <br />
+            <div id="conversationDiv">
+                <input type="text" id="text" th:placeholder="#{chat.write}"/>
+                <button id="sendMessage" onclick="sendMessage();"><span th:text="#{chat.send}"></span></button>
+                <p id="response"></p>
+            </div>
+        </div>
+        
+        <div th:replace="fragments/footer::footer"></div>
+    
+</body>
+</html>
