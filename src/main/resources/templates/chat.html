@@ -70,11 +70,7 @@
           
             function showMessageOutput(messageOutput) {
                 var response = $("#response").get(0);
-                var p = $('<p></p>').get(0);
-                p.style.wordWrap = 'break-word';
-                
-                console.log(messageOutput.first);
-                
+                    
                 switch (messageOutput.code) {
                 	case 'JOINED':
                 	var msg = messageOutput.from + " " + /*[[#{chat.joined}]]*/
