@@ -4,10 +4,8 @@ package com.dub.spring.chat;
 // POJO
 public class MyMessage {
 	 
-    private String from;// sender
-    private String text;//
-    //private boolean first;// first message after connection
-    
+    private String from;// sender username
+    private String text;
     
 	public String getFrom() {
 		return from;

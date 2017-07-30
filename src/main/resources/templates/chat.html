@@ -59,37 +59,38 @@
             
              
             function sendMessage() {
-                var from = document.getElementById('from').value;
-                var text = document.getElementById('text').value;
+            	var from = $("#from").get(0).value;
+                var text = $("#text").get(0).value;
+                if (text.trim().length > 0) {
                 stompClient.send(chatURL, {}, 
                   JSON.stringify({'from':from, 'text':text}));
+            	}
             }
              
           
             function showMessageOutput(messageOutput) {
-                var response = document.getElementById('response');
-                var p = document.createElement('p');
+                var response = $("#response").get(0);
+                var p = $('<p></p>').get(0);
                 p.style.wordWrap = 'break-word';
                 
                 console.log(messageOutput.first);
                 
                 switch (messageOutput.code) {
                 	case 'JOINED':
-                		p.appendChild(document.createTextNode(messageOutput.from + " " + /*[[#{chat.joined}]]*/
-                            + " (" + messageOutput.time + ")"));
-                	p.style.color = "Blue";	
-                    response.appendChild(p);
+                	var msg = messageOutput.from + " " + /*[[#{chat.joined}]]*/
+                            + " (" + messageOutput.time + ")";
+                	$('<p></p>').text(msg).css("color", "Blue").appendTo(response);
                 	break;
                 	case 'LEFT':
-                   	p.appendChild(document.createTextNode(messageOutput.from + " " + /*[[#{chat.left}]]*/ 
-                            + " (" + messageOutput.time + ")"));
-                  	p.style.color = "Green";	
-                    response.appendChild(p);
+                	var msg = messageOutput.from + " " + /*[[#{chat.left}]]*/
+                    + " (" + messageOutput.time + ")";
+                	$('<p></p>').text(msg).css("color", "Green").appendTo(response);               
                 	break;
                 	case 'NORMAL':
-                	p.appendChild(document.createTextNode(messageOutput.from + ": " 
-                        + messageOutput.text + " (" + messageOutput.time + ")"));
-                      response.appendChild(p);
+                	var msg = messageOutput.from + ": " 
+                        + messageOutput.text + " (" + messageOutput.time + ")";  
+                	$('<p></p>').text(msg).css("color", "Black").appendTo(response);
+                	
                 	break;
                 	default:
                 }

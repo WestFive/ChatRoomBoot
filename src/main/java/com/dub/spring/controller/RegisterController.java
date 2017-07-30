@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import com.dub.spring.chat.StompDisconnectEvent;
 import com.dub.spring.entities.MyUser;
 import com.dub.spring.entities.UserAuthority;
 import com.dub.spring.exceptions.DuplicateUserException;
@@ -26,7 +25,7 @@ import com.dub.spring.services.UserService;
 @Controller
 public class RegisterController {
 	
-	private static final Logger log = LoggerFactory.getLogger(StompDisconnectEvent.class);
+	private static final Logger log = LoggerFactory.getLogger(RegisterController.class);
 	
 	@Autowired UserService userService;
 	
