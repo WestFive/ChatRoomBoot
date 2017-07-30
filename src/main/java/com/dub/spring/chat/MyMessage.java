@@ -6,7 +6,7 @@ public class MyMessage {
 	 
     private String from;// sender
     private String text;//
-    private boolean first;// first message after connection
+    //private boolean first;// first message after connection
     
     
 	public String getFrom() {
@@ -21,11 +21,5 @@ public class MyMessage {
 	public void setText(String text) {
 		this.text = text;
 	}
-	public boolean isFirst() {
-		return first;
-	}
-	public void setFirst(boolean first) {
-		this.first = first;
-	}
-	
+
 }

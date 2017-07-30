@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.dub.spring.chat.ChatRoom;
-import com.dub.spring.chat.StompConnectEvent;
 
 /** Two chat groups are provided here, more can be added
  * */
@@ -18,7 +17,7 @@ import com.dub.spring.chat.StompConnectEvent;
 @Service
 public class ChatRoomServiceImpl implements ChatRoomService {
 		 
-    private static final Logger log = LoggerFactory.getLogger(StompConnectEvent.class);
+    private static final Logger log = LoggerFactory.getLogger(ChatRoomServiceImpl.class);
  
 	private Map<Integer, ChatRoom> chatRooms = new HashMap<>();
 	

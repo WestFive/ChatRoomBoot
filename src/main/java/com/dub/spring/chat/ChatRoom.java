@@ -3,13 +3,9 @@ package com.dub.spring.chat;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.springframework.stereotype.Service;
-
 /** 
- * Holds all users connected to a chat room
+ * POJO holds all users connected to a chat room
  * */
-
-@Service
 public class ChatRoom {
 	
 	private String name;
@@ -50,7 +46,7 @@ public class ChatRoom {
 		connectedUsers.remove(sessionId);
 	} 
 	
-	// for degugging only
+	// for debugging only
 	public void display() {
 		for (String key : connectedUsers.keySet()) {
 			System.out.println(key + ": " + connectedUsers.get(key));

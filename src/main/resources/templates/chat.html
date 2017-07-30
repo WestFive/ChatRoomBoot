@@ -10,7 +10,7 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.js"></script>
-
+<script src="https://code.jquery.com/jquery-2.2.4.js"></script>
 
 <script type="text/javascript" th:inline="javascript">
             var stompClient = null;
@@ -27,15 +27,11 @@
             console.log("username " + username);
              
             function setConnected(connected) {
-                document.getElementById('connect').disabled = connected;
-                document.getElementById('disconnect').disabled = !connected;
-                document.getElementById('conversationDiv').style.visibility 
-                  = connected ? 'visible' : 'hidden';
-                document.getElementById('welcomeChat').style.visibility
-                  = connected ? 'hidden' : 'visible';
-                document.getElementById('connectedMessage').style.visibility
-                = connected ? 'visible' : 'hidden';
-                document.getElementById('response').innerHTML = '';
+            	$("button[id='connect']").prop('disabled', connected);
+                $("button[id='disconnect']").prop('disabled', !connected);
+                $("#conversationDiv").css('visibility', connected ? 'visible' : 'hidden'); 
+                $("#welcomeChat").html(connected ? "You are connected" : "Please connect");               
+                $("#response").html("");
             }
              
             function connect() {
@@ -44,17 +40,12 @@
                 console.log('Sator ' + chatRoomUrl);
                 
                 stompClient.connect({}, function(frame) {
-                    console.log('Arepo');
                     setConnected(true);
-                    console.log('Connected: ' + frame);
+                    console.log('Connected');
                     stompClient.subscribe(subscribeURL, function(messageOutput) {
                         showMessageOutput(JSON.parse(messageOutput.body));
                     });
                     console.log('chatURL ' + chatURL);
-                    if (toto) {
-                    	sendDummy();
-                    	toto = false;
-                    }
                 });
             }
              
@@ -66,18 +57,12 @@
                 console.log("Disconnected");
             }
             
-            function sendDummy() {
-                var from = document.getElementById('from').value;
-                stompClient.send(chatURL, {}, 
-                        JSON.stringify({'from':from, 'text':'', 'first':'true'}));
-            }
-             
              
             function sendMessage() {
                 var from = document.getElementById('from').value;
                 var text = document.getElementById('text').value;
                 stompClient.send(chatURL, {}, 
-                  JSON.stringify({'from':from, 'text':text, 'first':'false'}));
+                  JSON.stringify({'from':from, 'text':text}));
             }
              
           
@@ -92,11 +77,13 @@
                 	case 'JOINED':
                 		p.appendChild(document.createTextNode(messageOutput.from + " " + /*[[#{chat.joined}]]*/
                             + " (" + messageOutput.time + ")"));
+                	p.style.color = "Blue";	
                     response.appendChild(p);
                 	break;
                 	case 'LEFT':
                    	p.appendChild(document.createTextNode(messageOutput.from + " " + /*[[#{chat.left}]]*/ 
                             + " (" + messageOutput.time + ")"));
+                  	p.style.color = "Green";	
                     response.appendChild(p);
                 	break;
                 	case 'NORMAL':
@@ -112,7 +99,8 @@
 </script>
 
 <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.1/css/bootstrap.min.css" />
-<link rel="stylesheet" th:href="@{/css/main.css}" /> 
+<link rel="stylesheet" th:href="@{/css/main.css}" />
+<link rel="stylesheet" th:href="@{/css/chat.css}" />  
 </head>
 
 
@@ -127,8 +115,8 @@
 			<span th:text="#{welcome} + ' '"></span>
 			<span sec:authentication="name"></span>
   			</h1>
-  			<p id="welcomeChat" th:text="#{chat.connect.please}"></p>
-  			<p id="connectedMessage" th:text="#{chat.connected}"></p>
+  			<br />
+  			<p id="welcomeChat" th:text="#{chat.connect.please}"></p>			
   			<br /><br />
    		</div>
     
